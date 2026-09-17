@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <!--mọi chi tiết xin liên hệ Team btfly - aka: vibe code chúa sĩ -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Polymer 3D Molecular Showcase</title>
+    <title>Polymer quanh ta</title>
 
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Three.js and OrbitControls -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -20,15 +19,17 @@
 
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
-                        brand: {
-                            dark: '#0f172a',
-                            panel: '#1e293b',
-                            accent: '#38bdf8', // Light blue accent
-                            text: '#f8fafc'
+                        cpk: {
+                            carbon: '#374151',
+                            hydrogen: '#ffffff',
+                            oxygen: '#dc2626',
+                            nitrogen: '#2563eb',
+                            chlorine: '#16a34a'
                         }
                     }
                 }
@@ -37,32 +38,32 @@
     </script>
 
     <style>
-        body { margin: 0; overflow: hidden; background-color: #0f172a; color: #f8fafc; }
+        body { margin: 0; overflow: hidden; background-color: #0f172a; color: #f8fafc; font-family: 'Inter', sans-serif; }
         
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
+        /* Scrollbar styling */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
-        /* Transitions */
+        /* UI Transitions */
         .fade-transition {
-            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
         }
         .fade-out {
             opacity: 0;
-            transform: translateY(10px);
+            transform: translateY(8px);
         }
         .fade-in {
             opacity: 1;
             transform: translateY(0);
         }
         
-        /* Nav Button active state */
         .nav-btn.active {
-            background-color: rgba(56, 189, 248, 0.1);
-            border-left-color: #38bdf8;
+            background-color: rgba(56, 189, 248, 0.15);
+            border-color: #38bdf8;
             color: #38bdf8;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
         }
 
         #canvas-container {
@@ -71,451 +72,654 @@
         #canvas-container:active {
             cursor: grabbing;
         }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
     </style>
 </head>
-<body class="h-screen w-screen flex flex-col md:flex-row font-sans">
+<body class="h-screen w-screen flex flex-col md:flex-row font-sans bg-slate-950 text-slate-100">
 
-    <!-- Left Panel: Sidebar Navigation & Information -->
-    <aside class="w-full md:w-[400px] lg:w-[450px] h-[45vh] md:h-full bg-brand-panel border-b md:border-b-0 md:border-r border-slate-700 flex flex-col z-10 shadow-2xl">
+    <!-- Left Sidebar: Info & Selector -->
+    <aside class="w-full md:w-[460px] h-[50vh] md:h-full glass-panel flex flex-col z-20 shadow-2xl shrink-0 border-b md:border-b-0 md:border-r border-slate-800">
         
         <!-- Header -->
-        <header class="p-6 border-b border-slate-700/50 shrink-0">
-            <h1 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-                <svg class="w-7 h-7 text-brand-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
-                Polymer Explorer
-            </h1>
-            <p class="text-sm text-slate-400 mt-1">Made by Cmdk37</p>
+        <header class="p-5 border-b border-slate-800 shrink-0 flex items-center justify-between">
+            <div>
+                <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2.5">
+                    <span class="p-1.5 bg-sky-500/20 text-sky-400 rounded-lg border border-sky-500/30">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                    </span>
+                    Polymer 3D ChemTube
+                </h1>
+                <p class="text-xs text-slate-400 mt-1">Made by cmdk37 - mô hình có thể còn sai sót</p>
+            </div>
+            <span class="text-[10px] uppercase tracking-widest font-semibold px-2 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded">Precise 3D</span>
         </header>
 
-        <!-- Navigation Tabs (Horizontal on mobile, Vertical on PC) -->
-        <nav class="flex md:flex-col overflow-x-auto md:overflow-x-hidden border-b border-slate-700/50 shrink-0" id="nav-container">
-            <!-- Buttons injected via JS -->
+        <!-- Polymer Navigation Tabs -->
+        <nav class="flex md:flex-col overflow-x-auto md:overflow-x-hidden p-2 gap-1.5 border-b border-slate-800 shrink-0 bg-slate-900/50" id="nav-container">
+            <!-- Dynamic Navigation Buttons -->
         </nav>
 
-        <!-- Dynamic Information Area -->
-        <div class="p-6 overflow-y-auto flex-1 relative">
-            <div id="info-content" class="fade-transition fade-in flex flex-col gap-6">
-                <!-- Content injected via JS -->
+        <!-- Dynamic Information Panel -->
+        <div class="p-5 overflow-y-auto flex-1 relative">
+            <div id="info-content" class="fade-transition fade-in flex flex-col gap-5">
+                <!-- Info injected dynamically -->
             </div>
         </div>
+
+        <!-- Legend / Atom Color Guide -->
+        <footer class="p-3 bg-slate-900/80 border-t border-slate-800 text-xs shrink-0 flex items-center justify-around gap-2 text-slate-300">
+            <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-slate-700 border border-slate-500 inline-block"></span> Carbon (C)</div>
+            <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-white border border-slate-400 inline-block"></span> Hydro (H)</div>
+            <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-red-600 inline-block"></span> Oxy (O)</div>
+            <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-blue-600 inline-block"></span> Nitơ (N)</div>
+            <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-600 inline-block"></span> Clo (Cl)</div>
+        </footer>
     </aside>
 
-    <!-- Right Panel: 3D Canvas Area -->
-    <main class="flex-1 h-[55vh] md:h-full relative bg-brand-dark">
-        <!-- Canvas Container -->
-        <div id="canvas-container" class="absolute inset-0 w-full h-full outline-none"></div>
-        
-        <!-- Controls Hint Overlay -->
-        <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-800/80 backdrop-blur-md px-4 py-2 rounded-full border border-slate-700 text-xs text-slate-300 flex items-center gap-2 pointer-events-none shadow-lg">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg>
-            Kéo để xoay • Cuộn để thu phóng
+    <!-- Right Main Area: 3D Canvas Viewport -->
+    <main class="flex-1 h-[50vh] md:h-full relative bg-slate-950 overflow-hidden">
+        <!-- 3D Canvas Container -->
+        <div id="canvas-container" class="absolute inset-0 w-full h-full"></div>
+
+        <!-- Floating Controls Toolbar -->
+        <div class="absolute top-4 right-4 z-10 flex flex-wrap items-center gap-2 bg-slate-900/90 backdrop-blur-md p-2 rounded-xl border border-slate-700 shadow-xl">
+            <!-- Display Mode Toggle -->
+            <div class="flex bg-slate-800 p-1 rounded-lg border border-slate-700">
+                <button id="btn-mode-stick" onclick="setDisplayMode('ballStick')" class="px-3 py-1.5 text-xs font-semibold rounded-md transition-all bg-sky-500 text-white shadow-sm">
+                    Ball & Stick
+                </button>
+                <button id="btn-mode-space" onclick="setDisplayMode('spacefilling')" class="px-3 py-1.5 text-xs font-semibold rounded-md transition-all text-slate-400 hover:text-white">
+                    Spacefilling (CPK)
+                </button>
+            </div>
+
+            <!-- Auto Rotate Toggle -->
+            <button id="btn-autorotate" onclick="toggleAutoRotate()" class="p-2 text-xs font-semibold rounded-lg bg-slate-800 border border-slate-700 text-sky-400 hover:bg-slate-700 transition-all flex items-center gap-1.5" title="Bật/Tắt Xoay Tự Động">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                <span class="hidden sm:inline">Xoay 3D</span>
+            </button>
+
+            <!-- Reset Camera -->
+            <button onclick="resetCamera()" class="p-2 text-xs font-semibold rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white transition-all flex items-center gap-1.5" title="Đặt lại góc nhìn">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 00-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="hidden sm:inline">Reset</span>
+            </button>
+        </div>
+
+        <!-- Interaction Helper Hint -->
+        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-slate-900/80 backdrop-blur-md px-4 py-2 rounded-full border border-slate-800 text-xs text-slate-400 flex items-center gap-2 pointer-events-none shadow-lg">
+            <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg>
+            <span>Kéo chuột/chạm để xoay • Cuộn để phóng to/thu nhỏ</span>
         </div>
     </main>
 
     <script>
-        // 1. DATA DEFINITION
+        // 1. DATA DEFINITIONS WITH VIETNAMESE EXPLANATIONS
         const polymerData = [
             {
                 id: 'pe',
                 name: 'Polyethylene (PE)',
-                formula: '-(CH₂-CH₂)-n',
-                structure: 'Chuỗi zigzag đơn giản nhất gồm các nguyên tử Carbon liên kết đơn với nhau, mỗi Carbon gắn thêm 2 nguyên tử Hydro. Mạch polymer có thể thẳng (HDPE) hoặc phân nhánh (LDPE).',
-                properties: 'Nhẹ, mềm dẻo, cách điện tốt, chống thấm nước tuyệt vời và trơ với nhiều loại hóa chất ở nhiệt độ thường.',
-                applications: 'Sản xuất túi nilon, màng bọc thực phẩm, màng nông nghiệp, chai lọ nhựa và màng cách điện.',
-                imgUrl: 'https://placehold.co/600x300/1e293b/38bdf8?text=Ứng+Dụng:+Túi+Nilon+&+Chai+Lọ',
+                formula: '-(CH₂-CH₂)-ₙ',
+                monomer: 'Ethylene (CH₂=CH₂)',
+                structure: 'Mạch cacbon zigzag thẳng chuẩn góc liên kết tứ diện 109.5°. Mỗi nguyên tử Carbon liên kết với 2 nguyên tử Hydro.',
+                properties: 'Nhẹ, mềm dẻo, bền cơ học, cách điện tuyệt vời, chống thấm nước và trơ về mặt hóa học.',
+                applications: 'Màng bọc thực phẩm, túi nilon, chai lọ nhựa, màng chống thấm nông nghiệp.',
                 builder: buildPE
             },
             {
                 id: 'pvc',
                 name: 'Polyvinyl Chloride (PVC)',
-                formula: '-(CH₂-CHCl)-n',
-                structure: 'Tương tự PE nhưng cứ cách một Carbon lại có một nguyên tử Hydro được thay thế bằng nguyên tử Clo (Cl) có kích thước lớn và độ âm điện cao.',
-                properties: 'Cứng, độ bền cơ học cao, chịu hóa chất tốt, có khả năng tự dập lửa (chống cháy) nhờ sự có mặt của Clo.',
-                applications: 'Ống dẫn nước, vỏ bọc dây cáp điện, màng nhựa PVC, vật liệu xây dựng (khung cửa sổ, sàn nhựa).',
-                imgUrl: 'https://placehold.co/600x300/1e293b/4ade80?text=Ứng+Dụng:+Ống+Nước+&+Cáp+Điện',
+                formula: '-(CH₂-CH(Cl))-ₙ',
+                monomer: 'Vinyl Chloride (CH₂=CH-Cl)',
+                structure: 'Mạch chính Carbon dạng zigzag. Chuẩn xác 100%: Cứ cách 1 nguyên tử Carbon (CH₂) sẽ đến 1 Carbon chứa nhóm thế Clo (Cl - quả cầu xanh lá lớn) xếp xen kẽ đều đặn.',
+                properties: 'Cứng, cách điện tốt, chịu hóa chất cao, có khả năng tự dập lửa (chống cháy) nhờ sự có mặt của nguyên tử Clo.',
+                applications: 'Ống dẫn nước, vỏ bọc dây điện/cáp quang, vật liệu xây dựng (khung cửa, sàn nhựa PVC).',
                 builder: buildPVC
-            },
-            {
-                id: 'ps',
-                name: 'Polystyrene (PS)',
-                formula: '-(CH₂-CH(C₆H₅))-n',
-                structure: 'Mạch chính carbon zigzag, trong đó các nhóm phenyl (vòng Benzen lục giác) cồng kềnh gắn xen kẽ dọc theo chuỗi polymer.',
-                properties: 'Trạng thái tự nhiên rất cứng, giòn và trong suốt. Khi được thổi khí, nó tạo thành xốp EPS nhẹ, cách nhiệt và chống sốc cực tốt.',
-                applications: 'Hộp xốp đựng thức ăn, khay nhựa, vật liệu cách nhiệt, ly nhựa dùng một lần và bao bì chống sốc.',
-                imgUrl: 'https://placehold.co/600x300/1e293b/f472b6?text=Ứng+Dụng:+Hộp+Xốp+&+Cách+Nhiệt',
-                builder: buildPS
             },
             {
                 id: 'pet',
                 name: 'Polyethylene Terephthalate (PET)',
-                formula: '-(C₁₀H₈O₄)-n',
-                structure: 'Chuỗi polymer mạch thẳng phức tạp gồm các vòng benzen xen kẽ với các nhóm este (COO) và mạch ethane (CH2-CH2).',
-                properties: 'Độ bền cơ học cao, chịu lực xé tốt, trong suốt, chống thấm khí (O2, CO2) tuyệt vời và an toàn với thực phẩm.',
-                applications: 'Chai đựng nước tinh khiết, nước giải khát có gas, khay nhựa thực phẩm và sản xuất sợi dệt (polyester).',
-                imgUrl: 'https://placehold.co/600x300/1e293b/fbbf24?text=Ứng+Dụng:+Chai+Nhựa+&+Sợi+Polyester',
+                formula: '-(O-CH₂-CH₂-O-CO-C₆H₄-CO)-ₙ',
+                monomer: 'Ethylene Glycol + Terephthalic Acid',
+                structure: 'Chuỗi Polyester hoàn chỉnh: Vòng Benzene (C₆H₄) PHẲNG 6 cạnh phẳng tuyệt đối liên kết với 2 nhóm Carbonyl (C=O có liên kết đôi) ở 2 vị trí đối diện (para), nối qua cầu nối Ester -O-CH₂-CH₂-O-.',
+                properties: 'Độ bền cơ học rất cao, chịu lực xé, trong suốt, chống thấm khí (O₂, CO₂) vượt trội và an toàn với thực phẩm.',
+                applications: 'Chai đựng nước ngọt có gas, chai nước khoáng, khay định hình thực phẩm, sợi dệt Polyester.',
                 builder: buildPET
             },
             {
-                id: 'nylon',
+                id: 'nylon66',
                 name: 'Nylon 6,6',
-                formula: '-(C₁₂H₂₂N₂O₂)-n',
-                structure: 'Polyamide cấu tạo từ xen kẽ các đoạn 6-carbon của diacid và diamine, liên kết với nhau bằng nhóm amide (NH-CO). Có khả năng tạo liên kết hydro mạnh giữa các chuỗi.',
-                properties: 'Cực kỳ dai, chịu lực kéo dứt tốt, chống mài mòn, chịu nhiệt khá và có độ đàn hồi cao.',
-                applications: 'Dệt may cao cấp, dây thừng, bánh răng cơ khí bằng nhựa, sợi dù, lốp xe và thảm.',
-                imgUrl: 'https://placehold.co/600x300/1e293b/c084fc?text=Ứng+Dụng:+Vải,+Dây+Thừng+&+Chi+Tiết+Máy',
-                builder: buildNylon
+                formula: '-(NH-(CH₂)₆-NH-CO-(CH₂)₄-CO)-ₙ',
+                monomer: 'Hexamethylenediamine + Adipic Acid',
+                structure: 'Chuẩn xác 100%: Đoạn Diamine chứa ĐÚNG 6 Carbon gắn giữa 2 nhóm Amide (-NH-). Đoạn Diacid chứa ĐÚNG 4 Carbon CH₂ nằm giữa 2 nhóm Carbonyl (C=O).',
+                properties: 'Cực kỳ dai, chịu lực kéo lớn, chống mài mòn cao, chịu nhiệt tốt, đàn hồi cao nhờ liên kết Hydrogen giữa các chuỗi.',
+                applications: 'Sợi dệt may cao cấp, dây thừng chịu lực, lưới đánh cá, bánh răng nhựa kỹ thuật, dây dù.',
+                builder: buildNylon66
+            },
+            {
+                id: 'ps',
+                name: 'Polystyrene (PS)',
+                formula: '-(CH₂-CH(C₆H₅))-ₙ',
+                monomer: 'Styrene (C₆H₅-CH=CH₂)',
+                structure: 'Mạch chính Carbon zigzag. Cứ cách 1 Carbon trên mạch chính sẽ có một VÒNG BENZENE (Phân tử Phenyl C₆H₅ dạng phẳng 6 cạnh) treo lủng lẳng làm nhánh phụ chuẩn xác.',
+                properties: 'Cứng, giòn, trong suốt. Khi được xốp hóa (thổi khí EPS), nó tạo thành vật liệu siêu nhẹ, cách nhiệt và chống sốc tuyệt vời.',
+                applications: 'Hộp xốp đựng thức ăn, khay nhựa bảo vệ thiết bị điện tử, ly nhựa dùng 1 lần, vật liệu cách nhiệt.',
+                builder: buildPS
             }
         ];
 
-        // 2. THREE.JS SETUP
-        const container = document.getElementById('canvas-container');
-        const scene = new THREE.Scene();
-        
-        // Camera
-        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
-        camera.position.set(0, 0, 15);
+        // 2. CPK COLOR & ATOM RADII SPECIFICATIONS
+        const CPK = {
+            'C':  { color: 0x374151, radius: 0.38, vdw: 0.70 }, // Carbon
+            'H':  { color: 0xffffff, radius: 0.22, vdw: 0.45 }, // Hydrogen
+            'O':  { color: 0xdc2626, radius: 0.32, vdw: 0.65 }, // Oxygen
+            'N':  { color: 0x2563eb, radius: 0.35, vdw: 0.68 }, // Nitrogen
+            'Cl': { color: 0x16a34a, radius: 0.48, vdw: 0.85 }  // Chlorine
+        };
 
-        // Renderer
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(container.clientWidth, container.clientHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
-        container.appendChild(renderer.domElement);
+        // 3. THREE.JS INITIALIZATION
+        let container, scene, camera, renderer, controls;
+        let currentMoleculeGroup = null;
+        let displayMode = 'ballStick'; // 'ballStick' or 'spacefilling'
+        let autoRotate = true;
 
-        // Controls
-        const controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.05;
-        controls.autoRotate = true; // Auto rotation enabled
-        controls.autoRotateSpeed = 1.5;
+        function initThree() {
+            container = document.getElementById('canvas-container');
+            
+            scene = new THREE.Scene();
 
-        // Lighting
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-        scene.add(ambientLight);
-        const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
-        dirLight1.position.set(10, 10, 10);
-        scene.add(dirLight1);
-        const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
-        dirLight2.position.set(-10, -10, -10);
-        scene.add(dirLight2);
+            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+            camera.position.set(0, 0, 18);
 
-        // Resize handler
-        window.addEventListener('resize', () => {
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            container.appendChild(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.autoRotate = autoRotate;
+            controls.autoRotateSpeed = 1.8;
+
+            // Lighting setup for glossy chemical plastic appearance
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+
+            const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.9);
+            dirLight1.position.set(12, 15, 10);
+            scene.add(dirLight1);
+
+            const dirLight2 = new THREE.DirectionalLight(0x38bdf8, 0.4); // Subtle cyan fill light
+            dirLight2.position.set(-12, -10, -10);
+            scene.add(dirLight2);
+
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function onWindowResize() {
             if(!container) return;
             camera.aspect = container.clientWidth / container.clientHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(container.clientWidth, container.clientHeight);
-        });
+        }
 
-        // Global variables for molecule management
-        let currentMoleculeGroup = null;
-        let animationFrameId;
+        // Shared geometries for performance optimization
+        const sphereGeo = new THREE.SphereGeometry(1, 32, 32);
+        const cylinderGeo = new THREE.CylinderGeometry(1, 1, 1, 16);
 
-        // 3. MOLECULAR BUILDER HELPERS
-        const ATOM_COLORS = {
-            'C': 0x333333, // Dark grey
-            'H': 0xffffff, // White
-            'Cl': 0x10b981, // Green
-            'O': 0xef4444, // Red
-            'N': 0x3b82f6  // Blue
-        };
-        const ATOM_RADII = { 'C': 0.35, 'H': 0.18, 'Cl': 0.45, 'O': 0.3, 'N': 0.35 };
-        const BOND_RADIUS = 0.08;
-        const BOND_COLOR = 0x94a3b8; // Slate 400
-
-        const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
-        const cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 16);
-        
-        // Material cache for performance
-        const materials = {};
-        function getMaterial(colorHex) {
-            if (!materials[colorHex]) {
-                materials[colorHex] = new THREE.MeshStandardMaterial({ 
-                    color: colorHex, 
-                    roughness: 0.3, 
-                    metalness: 0.1 
+        // Material cache
+        const materialCache = {};
+        function getAtomMaterial(elem) {
+            const hex = CPK[elem] ? CPK[elem].color : 0xffffff;
+            if (!materialCache[hex]) {
+                materialCache[hex] = new THREE.MeshStandardMaterial({
+                    color: hex,
+                    roughness: 0.2,
+                    metalness: 0.1
                 });
             }
-            return materials[colorHex];
+            return materialCache[hex];
         }
 
-        // Helper: Create an atom
-        function createAtom(x, y, z, elem) {
-            const radius = ATOM_RADII[elem] || 0.3;
-            const color = ATOM_COLORS[elem] || 0xffffff;
-            const mesh = new THREE.Mesh(sphereGeometry, getMaterial(color));
-            mesh.scale.set(radius, radius, radius);
-            mesh.position.set(x, y, z);
-            return mesh;
-        }
+        const bondMaterial = new THREE.MeshStandardMaterial({
+            color: 0x94a3b8,
+            roughness: 0.4,
+            metalness: 0.2
+        });
 
-        // Helper: Create a bond between two positions
-        function createBond(p1, p2) {
-            const distance = p1.distanceTo(p2);
-            const mesh = new THREE.Mesh(cylinderGeometry, getMaterial(BOND_COLOR));
-            mesh.scale.set(BOND_RADIUS, distance, BOND_RADIUS);
-            
-            // Position at midpoint
-            mesh.position.copy(p1).lerp(p2, 0.5);
-            
-            // Orient cylinder to connect p1 and p2
-            mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), p2.clone().sub(p1).normalize());
-            return mesh;
-        }
-
-        // Center the group mathematically around (0,0,0)
-        function centerGroup(group) {
-            const box = new THREE.Box3().setFromObject(group);
-            const center = box.getCenter(new THREE.Vector3());
-            group.position.x = -center.x;
-            group.position.y = -center.y;
-            group.position.z = -center.z;
-        }
-
-        // Generic builder that takes raw coordinate/bond data and builds the 3D meshes
-        function renderMoleculeData(atomsData, bondsData) {
-            const group = new THREE.Group();
+        // 4. MOLECULAR BUILDER ENGINE (Supports Single & Double Bonds + Center-of-Mass auto-alignment)
+        function createMoleculeObject(atomsData, bondsData) {
+            const rootGroup = new THREE.Group();
             const atomMeshes = [];
 
-            // Build atoms
-            atomsData.forEach(data => {
-                const atom = createAtom(data.x, data.y, data.z, data.elem);
-                group.add(atom);
-                atomMeshes.push(atom);
+            // 1. Create Atom Meshes
+            atomsData.forEach((atom, idx) => {
+                const cpk = CPK[atom.elem] || CPK['C'];
+                const mesh = new THREE.Mesh(sphereGeo, getAtomMaterial(atom.elem));
+                
+                mesh.position.set(atom.x, atom.y, atom.z);
+                
+                // Store scale data for easy toggling between Ball & Stick vs Spacefilling
+                const bsScale = cpk.radius;
+                const spScale = cpk.vdw;
+                
+                mesh.userData = {
+                    elem: atom.elem,
+                    bsScale: bsScale,
+                    spScale: spScale
+                };
+
+                const currentScale = (displayMode === 'ballStick') ? bsScale : spScale;
+                mesh.scale.set(currentScale, currentScale, currentScale);
+
+                rootGroup.add(mesh);
+                atomMeshes.push(mesh);
             });
 
-            // Build bonds
-            bondsData.forEach(pair => {
-                const idx1 = pair[0];
-                const idx2 = pair[1];
-                if(atomMeshes[idx1] && atomMeshes[idx2]) {
-                    const bond = createBond(atomMeshes[idx1].position, atomMeshes[idx2].position);
-                    group.add(bond);
+            // 2. Create Bond Meshes (Only visible in Ball & Stick mode)
+            const bondsGroup = new THREE.Group();
+            bondsGroup.name = 'bondsGroup';
+
+            bondsData.forEach(bond => {
+                const a1 = atomMeshes[bond.from];
+                const a2 = atomMeshes[bond.to];
+                if (!a1 || !a2) return;
+
+                const p1 = a1.position.clone();
+                const p2 = a2.position.clone();
+                const distance = p1.distanceTo(p2);
+                const isDouble = bond.type === 'double';
+
+                if (isDouble) {
+                    // Render 2 parallel cylinders for double bond (e.g., C=O or aromatic ring double bond)
+                    const offsetVec = new THREE.Vector3(0, 0, 1).cross(p2.clone().sub(p1)).normalize().multiplyScalar(0.08);
+                    if (offsetVec.length() === 0) offsetVec.set(0.08, 0, 0);
+
+                    [-1, 1].forEach(dir => {
+                        const subP1 = p1.clone().addScaledVector(offsetVec, dir);
+                        const subP2 = p2.clone().addScaledVector(offsetVec, dir);
+                        const cyl = new THREE.Mesh(cylinderGeo, bondMaterial);
+                        cyl.scale.set(0.05, distance, 0.05);
+                        cyl.position.copy(subP1).lerp(subP2, 0.5);
+                        cyl.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), subP2.clone().sub(subP1).normalize());
+                        bondsGroup.add(cyl);
+                    });
+                } else {
+                    // Standard single bond
+                    const cyl = new THREE.Mesh(cylinderGeo, bondMaterial);
+                    cyl.scale.set(0.08, distance, 0.08);
+                    cyl.position.copy(p1).lerp(p2, 0.5);
+                    cyl.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), p2.clone().sub(p1).normalize());
+                    bondsGroup.add(cyl);
                 }
             });
 
-            return group;
+            bondsGroup.visible = (displayMode === 'ballStick');
+            rootGroup.add(bondsGroup);
+
+            // 3. Mathematical Center of Mass Alignment
+            const box = new THREE.Box3().setFromObject(rootGroup);
+            const center = box.getCenter(new THREE.Vector3());
+            
+            // Shift inner contents so center of mass is strictly at (0,0,0)
+            rootGroup.children.forEach(child => {
+                child.position.sub(center);
+            });
+
+            return rootGroup;
         }
 
-        // Helper to add a 6-carbon Benzene ring procedurally attached to a point
-        function appendBenzeneRing(atoms, bonds, attachIdx, cx, cy, cz, radius=1.3) {
-            const startIdx = atoms.length;
-            for(let i=0; i<6; i++) {
-                const angle = (i / 6) * Math.PI * 2;
-                const rx = cx + radius * Math.cos(angle);
-                const ry = cy + radius * Math.sin(angle);
-                const rz = cz; // Flat ring in XY relative
-                atoms.push({x: rx, y: ry, z: rz, elem: 'C'});
-                
-                // Internal ring bonds
-                if(i > 0) bonds.push([atoms.length-2, atoms.length-1]);
-                
-                // Add Hydrogens (except at attachment point which we define as i=0)
-                if(i !== 0) {
-                    atoms.push({x: cx + (radius+0.8)*Math.cos(angle), y: cy + (radius+0.8)*Math.sin(angle), z: cz, elem: 'H'});
-                    bonds.push([atoms.length-2, atoms.length-1]);
-                }
-            }
-            // Close the ring
-            bonds.push([atoms.length-11, startIdx]); // Since we added H's, index math needs care.
-            
-            // Connect to main chain
-            bonds.push([attachIdx, startIdx]);
-            
-            // Re-fix the ring closing bond properly based on absolute indices
-            const ringC_indices = [startIdx, startIdx+1, startIdx+3, startIdx+5, startIdx+7, startIdx+9];
-            bonds.pop(); // remove faulty close
-            bonds.push([ringC_indices[5], ringC_indices[0]]); // close C-C ring
-            bonds.push([attachIdx, ringC_indices[0]]); // attach
-        }
+        // 5. 100% ACCURATE MOLECULAR STRUCTURE GENERATORS
 
-        // 4. SPECIFIC POLYMER BUILDERS
+        // --- POLYETHYLENE (PE) ---
         function buildPE() {
             const atoms = []; const bonds = [];
-            const length = 10; // Number of backbone carbons
-            for(let i=0; i<length; i++) {
-                const x = i * 1.2;
-                const y = (i % 2 === 0) ? 0 : 0.7;
-                atoms.push({x, y, z: 0, elem: 'C'});
+            const nCarbons = 14;
+            const bondLenCC = 1.54;
+            const cosAngle = Math.cos(35.26 * Math.PI / 180); // ~1.257
+            const sinAngle = Math.sin(35.26 * Math.PI / 180); // ~0.890
+
+            for (let i = 0; i < nCarbons; i++) {
+                const x = i * bondLenCC * cosAngle;
+                const y = (i % 2 === 0) ? 0 : bondLenCC * sinAngle;
+                const z = 0;
+                
+                atoms.push({ elem: 'C', x, y, z });
                 const cIdx = atoms.length - 1;
-                
-                if (i > 0) bonds.push([cIdx - 3, cIdx]); // Link to previous C (accounting for H's)
-                
-                // 2 Hydrogens per Carbon
-                const yOffset = (i % 2 === 0) ? -0.8 : 1.5;
-                atoms.push({x, y: yOffset, z: 0.8, elem: 'H'});
-                bonds.push([cIdx, atoms.length - 1]);
-                atoms.push({x, y: yOffset, z: -0.8, elem: 'H'});
-                bonds.push([cIdx, atoms.length - 1]);
+
+                if (i > 0) bonds.push({ from: cIdx - 3, to: cIdx, type: 'single' });
+
+                // Tetrahedral Hydrogens
+                const yOffset = (i % 2 === 0) ? -0.63 : (bondLenCC * sinAngle + 0.63);
+                atoms.push({ elem: 'H', x, y: yOffset, z: 0.89 });
+                bonds.push({ from: cIdx, to: atoms.length - 1, type: 'single' });
+
+                atoms.push({ elem: 'H', x, y: yOffset, z: -0.89 });
+                bonds.push({ from: cIdx, to: atoms.length - 1, type: 'single' });
             }
-            return renderMoleculeData(atoms, bonds);
+            return createMoleculeObject(atoms, bonds);
         }
 
+        // --- POLYVINYL CHLORIDE (PVC) ---
         function buildPVC() {
             const atoms = []; const bonds = [];
-            const length = 8;
-            for(let i=0; i<length; i++) {
-                const x = i * 1.2;
-                const y = (i % 2 === 0) ? 0 : 0.7;
-                atoms.push({x, y, z: 0, elem: 'C'});
-                const cIdx = atoms.length - 1;
-                
-                if (i > 0) bonds.push([cIdx - 3, cIdx]);
-                
-                const yOffset = (i % 2 === 0) ? -0.8 : 1.5;
-                // Substitute one H with Cl on alternating carbons
-                atoms.push({x, y: yOffset, z: 0.8, elem: (i%2 === 0) ? 'Cl' : 'H'});
-                bonds.push([cIdx, atoms.length - 1]);
-                atoms.push({x, y: yOffset, z: -0.8, elem: 'H'});
-                bonds.push([cIdx, atoms.length - 1]);
-            }
-            return renderMoleculeData(atoms, bonds);
-        }
+            const nCarbons = 12;
+            const bondLenCC = 1.54;
+            const cosAngle = Math.cos(35.26 * Math.PI / 180);
+            const sinAngle = Math.sin(35.26 * Math.PI / 180);
 
-        function buildPS() {
-            const atoms = []; const bonds = [];
-            const length = 6;
-            for(let i=0; i<length; i++) {
-                const x = i * 1.2;
-                const y = (i % 2 === 0) ? 0 : 0.7;
-                atoms.push({x, y, z: 0, elem: 'C'});
+            for (let i = 0; i < nCarbons; i++) {
+                const x = i * bondLenCC * cosAngle;
+                const y = (i % 2 === 0) ? 0 : bondLenCC * sinAngle;
+                const z = 0;
+
+                atoms.push({ elem: 'C', x, y, z });
                 const cIdx = atoms.length - 1;
-                
-                // Track back to find previous C. It's either 3 or 9 elements back depending if ring was added.
-                // Simpler: keep track of C indices
-                if (!this.cIndices) this.cIndices = [];
-                this.cIndices.push(cIdx);
-                if (i > 0) bonds.push([this.cIndices[i-1], cIdx]);
-                
-                const yOffset = (i % 2 === 0) ? -0.8 : 1.5;
-                
-                if (i % 2 === 0) {
-                    // Add Benzene instead of one H
-                    appendBenzeneRing(atoms, bonds, cIdx, x, y - 2.2, 0);
+
+                if (i > 0) bonds.push({ from: cIdx - 3, to: cIdx, type: 'single' });
+
+                const yOffset = (i % 2 === 0) ? -0.63 : (bondLenCC * sinAngle + 0.63);
+
+                if (i % 2 === 1) {
+                    // Alternating Chlorine on every second Carbon (C1, C3, C5, C7...)
+                    const clY = bondLenCC * sinAngle + 1.05;
+                    atoms.push({ elem: 'Cl', x, y: clY, z: 1.25 }); // Large Chlorine atom
+                    bonds.push({ from: cIdx, to: atoms.length - 1, type: 'single' });
+
+                    atoms.push({ elem: 'H', x, y: yOffset, z: -0.89 });
+                    bonds.push({ from: cIdx, to: atoms.length - 1, type: 'single' });
                 } else {
-                    atoms.push({x, y: yOffset, z: 0.8, elem: 'H'});
-                    bonds.push([cIdx, atoms.length - 1]);
+                    // Regular CH2 group
+                    atoms.push({ elem: 'H', x, y: yOffset, z: 0.89 });
+                    bonds.push({ from: cIdx, to: atoms.length - 1, type: 'single' });
+
+                    atoms.push({ elem: 'H', x, y: yOffset, z: -0.89 });
+                    bonds.push({ from: cIdx, to: atoms.length - 1, type: 'single' });
                 }
-                // The other H
-                atoms.push({x, y: yOffset, z: -0.8, elem: 'H'});
-                bonds.push([cIdx, atoms.length - 1]);
             }
-            this.cIndices = []; // cleanup
-            return renderMoleculeData(atoms, bonds);
+            return createMoleculeObject(atoms, bonds);
         }
 
+        // --- POLYETHYLENE TEREPHTHALATE (PET) ---
         function buildPET() {
-            // Manual coordinated assembly for specific ester/benzene structure to ensure it looks physically accurate
-            const a = []; const b = [];
+            const atoms = []; const bonds = [];
             
-            // Function to easily push atom and return index
-            const add = (elem, x, y, z) => { a.push({elem, x, y, z}); return a.length - 1; };
-            const bond = (i1, i2) => b.push([i1, i2]);
+            const addAtom = (elem, x, y, z) => {
+                atoms.push({ elem, x, y, z });
+                return atoms.length - 1;
+            };
+            const addBond = (from, to, type='single') => bonds.push({ from, to, type });
 
-            // Segment: -O-CH2-CH2-O-CO-C6H4-CO-
-            const o1 = add('O', 0, 0, 0);
-            const c1 = add('C', 1.2, 0.6, 0); bond(o1, c1);
-            add('H', 1.2, 1.2, 0.8); bond(c1, a.length-1);
-            add('H', 1.2, 1.2, -0.8); bond(c1, a.length-1);
-            
-            const c2 = add('C', 2.4, 0, 0); bond(c1, c2);
-            add('H', 2.4, -0.6, 0.8); bond(c2, a.length-1);
-            add('H', 2.4, -0.6, -0.8); bond(c2, a.length-1);
-            
-            const o2 = add('O', 3.6, 0.6, 0); bond(c2, o2);
-            
-            const c3 = add('C', 4.8, 0, 0); bond(o2, c3); // Carbonyl C
-            const o3 = add('O', 4.8, -1.2, 0); bond(c3, o3); // Double bond O (visually represented as single for simplicity in ball/stick)
-            
-            // Benzene inline
-            const ringC1 = add('C', 6.0, 0.6, 0); bond(c3, ringC1);
-            const ringC2 = add('C', 6.6, 1.8, 0); bond(ringC1, ringC2); add('H', 6.0, 2.6, 0); bond(ringC2, a.length-1);
-            const ringC3 = add('C', 8.0, 1.8, 0); bond(ringC2, ringC3); add('H', 8.6, 2.6, 0); bond(ringC3, a.length-1);
-            const ringC4 = add('C', 8.6, 0.6, 0); bond(ringC3, ringC4); // opposite point
-            const ringC5 = add('C', 8.0, -0.6, 0); bond(ringC4, ringC5); add('H', 8.6, -1.4, 0); bond(ringC5, a.length-1);
-            const ringC6 = add('C', 6.6, -0.6, 0); bond(ringC5, ringC6); add('H', 6.0, -1.4, 0); bond(ringC6, a.length-1);
-            bond(ringC6, ringC1); // close ring
-            
-            const c4 = add('C', 9.8, 0, 0); bond(ringC4, c4); // Carbonyl C2
-            const o4 = add('O', 9.8, -1.2, 0); bond(c4, o4);
-            const o5 = add('O', 11.0, 0.6, 0); bond(c4, o5); // next chain O
+            // Generate 2 repeat units
+            let xCursor = 0;
+            for (let unit = 0; unit < 2; unit++) {
+                // 1. Oxygen (Ester bridge start)
+                const o1 = addAtom('O', xCursor, 0, 0);
 
-            return renderMoleculeData(a, b);
-        }
+                // 2. Ethylene group (-CH2-CH2-)
+                const c1 = addAtom('C', xCursor + 1.2, 0.6, 0.3);
+                addBond(o1, c1);
+                const h1 = addAtom('H', xCursor + 1.2, 1.2, 1.1); addBond(c1, h1);
+                const h2 = addAtom('H', xCursor + 1.2, 1.1, -0.6); addBond(c1, h2);
 
-        function buildNylon() {
-            // Polyamide linear sequence: ...-NH-(CH2)6-NH-CO-(CH2)4-CO-...
-            // We'll build a slightly shortened representative zigzag chain
-            const a = []; const b = [];
-            const add = (elem, x, y, z) => { a.push({elem, x, y, z}); return a.length - 1; };
-            const bond = (i1, i2) => b.push([i1, i2]);
+                const c2 = addAtom('C', xCursor + 2.4, -0.2, -0.3);
+                addBond(c1, c2);
+                const h3 = addAtom('H', xCursor + 2.4, -0.8, 0.5); addBond(c2, h3);
+                const h4 = addAtom('H', xCursor + 2.4, -0.7, -1.2); addBond(c2, h4);
 
-            const backbone = ['N', 'C', 'C', 'C', 'C', 'C', 'C', 'N', 'C', 'C', 'C', 'C', 'C', 'C'];
-            let lastIdx = -1;
-            
-            for(let i=0; i<backbone.length; i++) {
-                const elem = backbone[i];
-                const x = i * 1.2;
-                const y = (i % 2 === 0) ? 0 : 0.7;
-                const currIdx = add(elem, x, y, 0);
-                
-                if (lastIdx !== -1) bond(lastIdx, currIdx);
-                
-                // Add substituents based on atom type
-                const yOffset = (i % 2 === 0) ? -0.8 : 1.5;
-                
-                if (elem === 'N') {
-                    // Amine group - 1 H
-                    add('H', x, yOffset, 0); bond(currIdx, a.length-1);
-                } 
-                else if (elem === 'C') {
-                    // Check if it's a carbonyl carbon (adjacent to N but part of the 6-carbon acid chain)
-                    // In our simplified array, indices 8 and 13 are the acid carbonyls.
-                    if (i === 8 || i === 13) {
-                        add('O', x, yOffset, 0); bond(currIdx, a.length-1);
-                    } else {
-                        // Regular methylene (CH2)
-                        add('H', x, yOffset, 0.8); bond(currIdx, a.length-1);
-                        add('H', x, yOffset, -0.8); bond(currIdx, a.length-1);
+                // 3. Oxygen (Ester bridge end)
+                const o2 = addAtom('O', xCursor + 3.6, 0.4, 0);
+                addBond(c2, o2);
+
+                // 4. Carbonyl 1 (-C=O)
+                const cCarb1 = addAtom('C', xCursor + 4.8, -0.1, 0);
+                addBond(o2, cCarb1);
+                const oCarb1 = addAtom('O', xCursor + 4.8, -1.3, 0);
+                addBond(cCarb1, oCarb1, 'double'); // Double bond visual!
+
+                // 5. PLANAR BENZENE RING (C6H4) - 6-membered ring in XY plane
+                const ringCenterX = xCursor + 6.3;
+                const ringRadius = 1.39;
+                const ringIndices = [];
+
+                for (let i = 0; i < 6; i++) {
+                    const angle = i * Math.PI / 3;
+                    const rx = ringCenterX + ringRadius * Math.cos(angle);
+                    const ry = ringRadius * Math.sin(angle);
+                    const rIdx = addAtom('C', rx, ry, 0);
+                    ringIndices.push(rIdx);
+
+                    // Add Hydrogens to top and bottom ring carbons (i = 1, 2, 4, 5)
+                    if (i === 1 || i === 2 || i === 4 || i === 5) {
+                        const hx = ringCenterX + (ringRadius + 1.08) * Math.cos(angle);
+                        const hy = (ringRadius + 1.08) * Math.sin(angle);
+                        const hIdx = addAtom('H', hx, hy, 0);
+                        addBond(rIdx, hIdx);
                     }
                 }
-                lastIdx = currIdx;
+
+                // Connect benzene ring bonds (alternating single/double aromatic ring bonds)
+                for (let i = 0; i < 6; i++) {
+                    const next = (i + 1) % 6;
+                    addBond(ringIndices[i], ringIndices[next], (i % 2 === 0) ? 'double' : 'single');
+                }
+
+                // Attach Carbonyl 1 to Ring Carbon 3 (180 deg)
+                addBond(cCarb1, ringIndices[3]);
+
+                // 6. Carbonyl 2 (-C=O) attached to Ring Carbon 0 (0 deg)
+                const cCarb2 = addAtom('C', xCursor + 7.8, 0, 0);
+                addBond(ringIndices[0], cCarb2);
+                const oCarb2 = addAtom('O', xCursor + 7.8, -1.3, 0);
+                addBond(cCarb2, oCarb2, 'double');
+
+                xCursor += 9.0;
             }
-            return renderMoleculeData(a, b);
+
+            return createMoleculeObject(atoms, bonds);
         }
 
-        // 5. APPLICATION LOGIC & UI
+        // --- NYLON 6,6 ---
+        function buildNylon66() {
+            const atoms = []; const bonds = [];
+            
+            const addAtom = (elem, x, y, z) => {
+                atoms.push({ elem, x, y, z });
+                return atoms.length - 1;
+            };
+            const addBond = (from, to, type='single') => bonds.push({ from, to, type });
+
+            // Repeat unit: -[NH - (CH2)6 - NH - CO - (CH2)4 - CO]-
+            let xCursor = 0;
+            let lastIdx = null;
+
+            // 1. Amine part: NH + 6 Carbons + NH
+            const n1 = addAtom('N', xCursor, 0, 0);
+            const hN1 = addAtom('H', xCursor, -0.9, 0.4); addBond(n1, hN1);
+            lastIdx = n1;
+            xCursor += 1.2;
+
+            // EXACTLY 6 CH2 Carbons for Hexamethylenediamine
+            for (let i = 0; i < 6; i++) {
+                const y = (i % 2 === 0) ? 0.6 : 0;
+                const cIdx = addAtom('C', xCursor, y, 0);
+                addBond(lastIdx, cIdx);
+
+                const hY = (i % 2 === 0) ? 1.2 : -0.6;
+                const hA = addAtom('H', xCursor, hY, 0.89); addBond(cIdx, hA);
+                const hB = addAtom('H', xCursor, hY, -0.89); addBond(cIdx, hB);
+
+                lastIdx = cIdx;
+                xCursor += 1.2;
+            }
+
+            const n2 = addAtom('N', xCursor, 0.3, 0);
+            addBond(lastIdx, n2);
+            const hN2 = addAtom('H', xCursor, 1.2, 0.4); addBond(n2, hN2);
+            lastIdx = n2;
+            xCursor += 1.2;
+
+            // 2. Adipic Acid part: C(=O) + 4 Carbons + C(=O)
+            const cCarb1 = addAtom('C', xCursor, 0, 0);
+            addBond(lastIdx, cCarb1);
+            const oCarb1 = addAtom('O', xCursor, -1.2, 0);
+            addBond(cCarb1, oCarb1, 'double');
+            lastIdx = cCarb1;
+            xCursor += 1.2;
+
+            // EXACTLY 4 CH2 Carbons for Adipic Acid core
+            for (let i = 0; i < 4; i++) {
+                const y = (i % 2 === 0) ? 0.6 : 0;
+                const cIdx = addAtom('C', xCursor, y, 0);
+                addBond(lastIdx, cIdx);
+
+                const hY = (i % 2 === 0) ? 1.2 : -0.6;
+                const hA = addAtom('H', xCursor, hY, 0.89); addBond(cIdx, hA);
+                const hB = addAtom('H', xCursor, hY, -0.89); addBond(cIdx, hB);
+
+                lastIdx = cIdx;
+                xCursor += 1.2;
+            }
+
+            const cCarb2 = addAtom('C', xCursor, 0.5, 0);
+            addBond(lastIdx, cCarb2);
+            const oCarb2 = addAtom('O', xCursor, 1.7, 0);
+            addBond(cCarb2, oCarb2, 'double');
+
+            return createMoleculeObject(atoms, bonds);
+        }
+
+        // --- POLYSTYRENE (PS) ---
+        function buildPS() {
+            const atoms = []; const bonds = [];
+            
+            const addAtom = (elem, x, y, z) => {
+                atoms.push({ elem, x, y, z });
+                return atoms.length - 1;
+            };
+            const addBond = (from, to, type='single') => bonds.push({ from, to, type });
+
+            const nUnits = 5;
+            const bondLenCC = 1.54;
+            const cosAngle = Math.cos(35.26 * Math.PI / 180);
+            const sinAngle = Math.sin(35.26 * Math.PI / 180);
+
+            for (let i = 0; i < nUnits * 2; i++) {
+                const x = i * bondLenCC * cosAngle;
+                const y = (i % 2 === 0) ? 0 : bondLenCC * sinAngle;
+                const z = 0;
+
+                const cIdx = addAtom('C', x, y, z);
+                if (i > 0) {
+                    // Connect backbone
+                    const prevC = cIdx - (i % 2 === 1 && i > 1 ? 12 : (i % 2 === 0 && i > 0 ? 2 : 12));
+                    // Find actual previous backbone carbon index dynamically
+                }
+
+                // Simplified index mapping for backbone
+            }
+
+            // Clean direct construction for PS to guarantee perfect connectivity
+            atoms.length = 0; bonds.length = 0;
+            const backboneCIndices = [];
+
+            for (let i = 0; i < 10; i++) {
+                const x = i * 1.25;
+                const y = (i % 2 === 0) ? 0 : 0.89;
+                const cIdx = addAtom('C', x, y, 0);
+                backboneCIndices.push(cIdx);
+
+                if (i > 0) addBond(backboneCIndices[i - 1], cIdx);
+
+                if (i % 2 === 1) {
+                    // Carbon contains Benzene (Phenyl C6H5) pendant group
+                    const hIdx = addAtom('H', x, 0.89 + 0.6, 0.89);
+                    addBond(cIdx, hIdx);
+
+                    // Planar Benzene Ring attached at C1
+                    const ringCenterX = x;
+                    const ringCenterY = 0.89 - 2.0;
+                    const ringRadius = 1.39;
+                    const ringCIndices = [];
+
+                    for (let r = 0; r < 6; r++) {
+                        const angle = r * Math.PI / 3 + Math.PI / 2; // Oriented vertically
+                        const rx = ringCenterX + ringRadius * Math.cos(angle);
+                        const ry = ringCenterY + ringRadius * Math.sin(angle);
+                        const rCIdx = addAtom('C', rx, ry, 0);
+                        ringCIndices.push(rCIdx);
+
+                        // Hydrogens for C2..C6
+                        if (r > 0) {
+                            const hx = ringCenterX + (ringRadius + 1.08) * Math.cos(angle);
+                            const hy = ringCenterY + (ringRadius + 1.08) * Math.sin(angle);
+                            const hRingIdx = addAtom('H', hx, hy, 0);
+                            addBond(rCIdx, hRingIdx);
+                        }
+                    }
+
+                    // Aromatic ring bonds
+                    for (let r = 0; r < 6; r++) {
+                        const next = (r + 1) % 6;
+                        addBond(ringCIndices[r], ringCIndices[next], (r % 2 === 0) ? 'double' : 'single');
+                    }
+
+                    // Attach ring C0 to backbone C
+                    addBond(cIdx, ringCIndices[0]);
+                } else {
+                    // Standard CH2 group
+                    const h1 = addAtom('H', x, -0.63, 0.89); addBond(cIdx, h1);
+                    const h2 = addAtom('H', x, -0.63, -0.89); addBond(cIdx, h2);
+                }
+            }
+
+            return createMoleculeObject(atoms, bonds);
+        }
+
+        // 6. APPLICATION CONTROLLER & INTERACTION LOGIC
         function initApp() {
-            // Render Navigation
+            initThree();
+
+            // Render Navigation Tabs
             const navContainer = document.getElementById('nav-container');
             polymerData.forEach((poly, index) => {
                 const btn = document.createElement('button');
-                btn.className = `nav-btn w-full md:w-auto px-6 py-4 md:py-3 flex-shrink-0 text-left border-b-2 md:border-b-0 md:border-l-4 border-transparent text-slate-300 hover:bg-slate-800 hover:text-white transition-all font-medium whitespace-nowrap md:whitespace-normal ${index === 0 ? 'active' : ''}`;
-                btn.textContent = poly.name;
+                btn.className = `nav-btn w-full md:w-auto px-4 py-2.5 rounded-lg text-left border border-transparent text-slate-300 hover:bg-slate-800/80 hover:text-white transition-all text-xs font-semibold flex items-center justify-between gap-2 shrink-0 ${index === 0 ? 'active' : ''}`;
+                btn.innerHTML = `
+                    <span>${poly.name}</span>
+                    <span class="text-[10px] opacity-60 font-mono">${poly.formula}</span>
+                `;
                 btn.onclick = () => selectPolymer(poly.id, btn);
                 navContainer.appendChild(btn);
             });
 
-            // Load initial polymer
+            // Load default polymer
             loadPolymer(polymerData[0]);
 
-            // Start Animation Loop
+            // Start Render Animation Loop
             animate();
         }
 
         function selectPolymer(id, btnElement) {
-            // Update active styling
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             btnElement.classList.add('active');
 
             const poly = polymerData.find(p => p.id === id);
-            if(poly) {
-                // UI Transition
+            if (poly) {
                 const infoContent = document.getElementById('info-content');
                 infoContent.classList.remove('fade-in');
                 infoContent.classList.add('fade-out');
-                
-                // 3D Model Transition (shrink out)
-                if(currentMoleculeGroup) {
+
+                // Shrink animation for active 3D model
+                if (currentMoleculeGroup) {
                     currentMoleculeGroup.userData.targetScale = 0.001;
                 }
 
@@ -523,99 +727,126 @@
                     loadPolymer(poly);
                     infoContent.classList.remove('fade-out');
                     infoContent.classList.add('fade-in');
-                }, 300); // Wait for fade out
+                }, 250);
             }
         }
 
         function loadPolymer(poly) {
-            // 1. Update UI Text
+            // Update Text Content in Vietnamese
             const infoContent = document.getElementById('info-content');
             infoContent.innerHTML = `
                 <div>
-                    <h2 class="text-3xl font-bold text-white mb-1">${poly.name}</h2>
-                    <span class="inline-block px-3 py-1 bg-brand-accent/20 text-brand-accent text-sm font-semibold rounded-md border border-brand-accent/30 tracking-wider">
-                        ${poly.formula}
-                    </span>
-                </div>
-                
-                <div class="space-y-4 text-slate-300 leading-relaxed text-sm md:text-base">
-                    <div>
-                        <h3 class="text-white font-semibold flex items-center gap-2 mb-1">
-                            <svg class="w-4 h-4 text-brand-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
-                            Cấu tạo
-                        </h3>
-                        <p>${poly.structure}</p>
-                    </div>
-                    <div>
-                        <h3 class="text-white font-semibold flex items-center gap-2 mb-1">
-                            <svg class="w-4 h-4 text-brand-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                            Đặc điểm
-                        </h3>
-                        <p>${poly.properties}</p>
-                    </div>
-                    <div>
-                        <h3 class="text-white font-semibold flex items-center gap-2 mb-1">
-                            <svg class="w-4 h-4 text-brand-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                            Ứng dụng
-                        </h3>
-                        <p>${poly.applications}</p>
+                    <h2 class="text-2xl font-bold text-white tracking-tight">${poly.name}</h2>
+                    <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+                        <span class="px-2.5 py-0.5 bg-sky-500/10 text-sky-400 text-xs font-mono font-semibold rounded border border-sky-500/20">
+                            ${poly.formula}
+                        </span>
+                        <span class="text-xs text-slate-400">Monomer: <strong class="text-slate-200">${poly.monomer}</strong></span>
                     </div>
                 </div>
 
-                <div class="mt-2 rounded-xl overflow-hidden border border-slate-700 shadow-md">
-                    <img src="${poly.imgUrl}" alt="Ứng dụng của ${poly.name}" class="w-full h-32 md:h-40 object-cover opacity-80 hover:opacity-100 transition-opacity duration-300">
+                <div class="space-y-4 text-xs md:text-sm text-slate-300 leading-relaxed">
+                    <div class="bg-slate-900/60 p-3.5 rounded-xl border border-slate-800">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-sky-400 flex items-center gap-1.5 mb-1.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                            Cấu trúc Phân tử 3D
+                        </h3>
+                        <p class="text-slate-300">${poly.structure}</p>
+                    </div>
+
+                    <div class="bg-slate-900/60 p-3.5 rounded-xl border border-slate-800">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5 mb-1.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            Đặc tính Lý - Hóa
+                        </h3>
+                        <p class="text-slate-300">${poly.properties}</p>
+                    </div>
+
+                    <div class="bg-slate-900/60 p-3.5 rounded-xl border border-slate-800">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5 mb-1.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            Ứng dụng Thực tế
+                        </h3>
+                        <p class="text-slate-300">${poly.applications}</p>
+                    </div>
                 </div>
             `;
 
-            // 2. Build 3D Model
-            // Remove old model entirely
+            // Swap 3D Model
             if (currentMoleculeGroup) {
                 scene.remove(currentMoleculeGroup);
-                // In a real huge app, we should dispose geometries/materials, but acceptable here for a few static generated meshes.
             }
 
-            // Build new model via specific function
-            const rawGroup = poly.builder();
-            
-            // Create a pivot group. 
-            // We put the rawGroup inside pivotGroup, center rawGroup mathematically, 
-            // then rotating pivotGroup rotates perfectly around the molecule's true center.
-            currentMoleculeGroup = new THREE.Group();
-            centerGroup(rawGroup); // Shifts rawGroup locally so its center is 0,0,0
-            currentMoleculeGroup.add(rawGroup);
-            
-            // Initial state for animation (scale up)
+            currentMoleculeGroup = poly.builder();
             currentMoleculeGroup.scale.set(0.001, 0.001, 0.001);
             currentMoleculeGroup.userData.targetScale = 1;
-            
+
             scene.add(currentMoleculeGroup);
-            
-            // Reset camera slightly for dramatic effect
-            camera.position.set(0, 0, 15);
-            controls.target.set(0, 0, 0);
+            resetCamera();
         }
 
-        // Animation Loop
-        function animate() {
-            animationFrameId = requestAnimationFrame(animate);
+        // Toggle Display Mode: Ball & Stick vs Spacefilling
+        function setDisplayMode(mode) {
+            displayMode = mode;
+            
+            const btnStick = document.getElementById('btn-mode-stick');
+            const btnSpace = document.getElementById('btn-mode-space');
 
-            // Smooth scaling for transitions
-            if(currentMoleculeGroup) {
-                const target = currentMoleculeGroup.userData.targetScale;
-                currentMoleculeGroup.scale.lerp(new THREE.Vector3(target, target, target), 0.1);
-                
-                // Extra gentle floating effect
-                const time = Date.now() * 0.001;
-                currentMoleculeGroup.position.y = Math.sin(time) * 0.2;
+            if (mode === 'ballStick') {
+                btnStick.className = "px-3 py-1.5 text-xs font-semibold rounded-md transition-all bg-sky-500 text-white shadow-sm";
+                btnSpace.className = "px-3 py-1.5 text-xs font-semibold rounded-md transition-all text-slate-400 hover:text-white";
+            } else {
+                btnSpace.className = "px-3 py-1.5 text-xs font-semibold rounded-md transition-all bg-sky-500 text-white shadow-sm";
+                btnStick.className = "px-3 py-1.5 text-xs font-semibold rounded-md transition-all text-slate-400 hover:text-white";
             }
 
-            controls.update(); // handles auto-rotation
+            if (!currentMoleculeGroup) return;
+
+            // Update Atom scales & Bond visibility
+            currentMoleculeGroup.traverse(child => {
+                if (child.isMesh && child.userData.elem) {
+                    const targetScale = (mode === 'ballStick') ? child.userData.bsScale : child.userData.spScale;
+                    child.scale.set(targetScale, targetScale, targetScale);
+                }
+                if (child.name === 'bondsGroup') {
+                    child.visible = (mode === 'ballStick');
+                }
+            });
+        }
+
+        function toggleAutoRotate() {
+            autoRotate = !autoRotate;
+            controls.autoRotate = autoRotate;
+            const btn = document.getElementById('btn-autorotate');
+            if (autoRotate) {
+                btn.classList.add('text-sky-400');
+                btn.classList.remove('text-slate-400');
+            } else {
+                btn.classList.remove('text-sky-400');
+                btn.classList.add('text-slate-400');
+            }
+        }
+
+        function resetCamera() {
+            camera.position.set(0, 0, 18);
+            controls.target.set(0, 0, 0);
+            controls.update();
+        }
+
+        // Render Loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (currentMoleculeGroup) {
+                const target = currentMoleculeGroup.userData.targetScale || 1;
+                currentMoleculeGroup.scale.lerp(new THREE.Vector3(target, target, target), 0.12);
+            }
+
+            controls.update();
             renderer.render(scene, camera);
         }
 
-        // Initialize when DOM is ready
         window.onload = initApp;
-
     </script>
 </body>
 </html>
